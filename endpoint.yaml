@@ -1,0 +1,73 @@
+swagger: '2.0'
+info:
+  title: Cloud Endpoints with API Keys
+  description: Sample API on Cloud Endpoints with a Cloud Run, Cloud Function and App Engine with IAP backend
+  version: 1.0.0
+host: endpoint-<hash>-uc.a.run.app
+schemes:
+  - https
+produces:
+  - application/json
+paths:
+  /hello:
+    get:
+      summary: Greet a user from Cloud Run
+      operationId: hello_cloud_run
+      x-google-backend:
+        address: https://apikey-endpoint-<hash>-uc.a.run.app
+        path_translation: APPEND_PATH_TO_ADDRESS
+      security:
+        - api_key: []
+      parameters:
+        - in: query
+          name: name
+          required: false
+          type: string
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            type: string
+  /hello-gcf:
+    get:
+      summary: Greet a user from Function
+      operationId: hello_cloud_function
+      x-google-backend:
+        address: https://us-central1-<PROJECT_ID>.cloudfunctions.net/apikey-endpoint
+      security:
+        - api_key: []
+      parameters:
+        - in: query
+          name: name
+          required: false
+          type: string
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            type: string
+  /hello-gae:
+    get:
+      summary: Greet a user from App Engine
+      operationId: hello_gae
+      x-google-backend:
+        address: https://<PROJECT_ID>.appspot.com/hello
+        jwt_audience: <PROJECT_NUMBER>-<hash>.apps.googleusercontent.com
+      security:
+        - api_key: []
+      parameters:
+        - in: query
+          name: name
+          required: false
+          type: string
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            type: string
+securityDefinitions:
+  # This section configures basic authentication with an API key.
+  api_key:
+    type: "apiKey"
+    name: "key"
+    in: "query"

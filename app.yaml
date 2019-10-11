@@ -1,0 +1,4 @@
+runtime: go112
+
+env_variables:
+  ENV: "App Engine"
