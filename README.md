@@ -3,6 +3,8 @@
 This repository is an example of deployment of Cloud Endpoint secured with API Keys for reaching
 private Cloud Function, private Cloud Run and IAP protected App Engine
 
+See the [Medium article for more details](https://medium.com/google-cloud/secure-cloud-run-cloud-functions-and-app-engine-with-api-key-73c57bededd1)
+
 # Deployment
 
 The service have 5 elements
