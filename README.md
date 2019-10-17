@@ -24,20 +24,22 @@ Change the `<PROJECT_ID>` by your project ID
 ```bash
 gcloud beta iam service-accounts create endpoint-id
 
+# Allow to deploy endpoint
 gcloud projects add-iam-policy-binding <PROJECT_ID> \
   --member=serviceAccount:endpoint-id@<PROJECT_ID>.iam.gserviceaccount.com \
   --role=roles/servicemanagement.configEditor
+# Allow private cloud run access
 gcloud projects add-iam-policy-binding <PROJECT_ID> \
   --member=serviceAccount:endpoint-id@<PROJECT_ID>.iam.gserviceaccount.com \ 
   --role=roles/run.invoker
+# Allow private function access
 gcloud projects add-iam-policy-binding <PROJECT_ID> \
   --member=serviceAccount:endpoint-id@<PROJECT_ID>.iam.gserviceaccount.com \
   --role=roles/cloudfunctions.invoker
-
-# Don't work today.
-# gcloud projects add-iam-policy-binding gdglyon-cloudrun \
-#   --member=serviceAccount:endpoint-id@gdglyon-cloudrun.iam.gserviceaccount.com \
-#   --role=roles/iap.httpResourceAccesssor
+# Allow app engine IAP protected access
+gcloud projects add-iam-policy-binding <PROJECT_ID> \
+   --member=serviceAccount:endpoint-id@<PROJECT_ID>.iam.gserviceaccount.com \
+   --role=roles/iap.httpsResourceAccessor
 
 gcloud beta run deploy endpoint \
     --image="gcr.io/endpoints-release/endpoints-runtime-serverless:1" \
