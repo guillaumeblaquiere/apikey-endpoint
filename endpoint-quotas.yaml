@@ -1,0 +1,101 @@
+swagger: '2.0'
+info:
+  title: Cloud Endpoints with API Keys
+  description: Sample API on Cloud Endpoints with a Cloud Run, Cloud Function and App Engine with IAP backend
+  version: 1.0.0
+host: endpoint-<hash>-uc.a.run.app
+schemes:
+  - https
+produces:
+  - application/json
+x-google-management:
+  metrics:
+    - name: "my_first_quota"
+      displayName: "My first quota"
+      valueType: INT64
+      metricKind: DELTA
+  quota:
+    limits:
+      - name: "read-get"
+        metric: "my_first_quota"
+        unit: "1/min/{project}"
+        values:
+          STANDARD: 1
+paths:
+  /hello:
+    get:
+      summary: Greet a user from Cloud Run
+      operationId: hello_cloud_run
+      x-google-backend:
+        address: https://apikey-endpoint-<hash>-uc.a.run.app
+        path_translation: APPEND_PATH_TO_ADDRESS
+      x-google-quota:
+        metricCosts:
+          "my_first_quota": 1
+      security:
+        - google_id_token: []
+      parameters:
+        - in: query
+          name: name
+          required: false
+          type: string
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            type: string
+  /hello-gcf:
+    get:
+      summary: Greet a user from Function
+      operationId: hello_cloud_function
+      x-google-backend:
+        address: https://us-central1-<PROJECT_ID>.cloudfunctions.net/apikey-endpoint
+      x-google-quota:
+        metricCosts:
+          "my_first_quota": 5
+      security:
+        - google_id_token: []
+      parameters:
+        - in: query
+          name: name
+          required: false
+          type: string
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            type: string
+  /hello-gae:
+    get:
+      summary: Greet a user from App Engine
+      operationId: hello_gae
+      x-google-backend:
+        address: https://<PROJECT_ID>.appspot.com/hello
+        jwt_audience: <PROJECT_NUMBER>-<hash>.apps.googleusercontent.com
+      x-google-quota:
+        metricCosts:
+          "my_first_quota": 10
+      security:
+        - google_id_token: []
+      parameters:
+        - in: query
+          name: name
+          required: false
+          type: string
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            type: string
+securityDefinitions:
+  # This section configures basic authentication with an API key.
+  api_key:
+    type: "apiKey"
+    name: "key"
+    in: "query"
+  google_id_token:
+    authorizationUrl: ""
+    flow: "implicit"
+    type: "oauth2"
+    x-google-issuer: "https://accounts.google.com"
+    x-google-jwks_uri: "https://www.googleapis.com/oauth2/v3/certs"
